@@ -1,0 +1,19 @@
+{
+    "name": "survival",
+    "version": "0.0.0",
+    "files": [
+        "images.g.jres",
+        "images.g.ts",
+        "tilemap.g.jres",
+        "tilemap.g.ts",
+        "main.ts"
+    ],
+    "supportedTargets": [
+        "arcade"
+    ],
+    "dependencies": {
+        "device": "*",
+        "arcade-timers": "github:microsoft/arcade-timers#v1.1.0"
+    },
+    "testDependencies": {}
+}
