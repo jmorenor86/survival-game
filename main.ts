@@ -137,18 +137,32 @@ function shoot() {
         }
 
     })
+
+    sprites.onOverlap(SpriteKind.Sword, SpriteKind.Enemy, function (sprite, otherSprite) {
+        let mySprite: Sprite = null
+        sprites.destroy(enemy, effects.fire, 500)
+
+    })
+
+    sprites.onOverlap(SpriteKind.Enemy, SpriteKind.Player, function (sprite, otherSprite) {
+        let mySprite: Sprite = null
+        info.changeLifeBy(-1)
+        pause(500)
+    })
  }
  
  function createEnemy() {
      enemy = sprites.create(assets.image`enemy_left`, SpriteKind.Enemy)
      tiles.placeOnTile(enemy, tiles.getTileLocation(4, 44))
      enemy.setVelocity(-50, 0)
-     scene.onOverlapTile(SpriteKind.Player, sprites.castle.tileGrass1, function (sprite, location) {
-         enemy.follow(john, 30)})
+     
+     //scene.onOverlapTile(SpriteKind.Player, sprites.castle.tileGrass1, function (sprite, location) {
+        // enemy.follow(john, 30)})
  }
  
  function createTileMap() {
      tiles.setCurrentTilemap(tilemap`level_1`)
+     info.setLife(3)
      
  }
  
@@ -165,7 +179,7 @@ function shoot() {
              
          }
      })
-     game.showLongText("Hi,I'm John. I'm a military in Torralba. I need to investigate why all people are becoming zombies!!!", DialogLayout.Bottom)
+     game.showLongText("Hi,I'm John. I'm a military in Torralba. I need to investigate why all people are becoming zombies!!!!! to attack press A ", DialogLayout.Bottom)
      dialogmode = false
  }
  
@@ -200,4 +214,11 @@ function shoot() {
         sword.right = john.left
         sword.y = john.y
     }
-})
+ })
+
+ game.onUpdate(function () {
+    let tmLocation = john.tilemapLocation()
+    if (tmLocation.col == 3 && tmLocation.row == 47) {
+       enemy.follow(john, 30)
+    }
+ })
