@@ -22,8 +22,8 @@
     export const Sword = SpriteKind.create()
  }
 
- let john : any 
- let enemy: any
+let john : any 
+let enemies: any[] = []
  let dialogmode = true
 let lastDirection = 0
 let sword: Sprite
@@ -35,7 +35,7 @@ let sword: Sprite
      createPlayer()
      createSword()
      shoot()
-     createEnemy()
+    
      
  }
 
@@ -140,7 +140,9 @@ function shoot() {
 
     sprites.onOverlap(SpriteKind.Sword, SpriteKind.Enemy, function (sprite, otherSprite) {
         let mySprite: Sprite = null
-        sprites.destroy(enemy, effects.fire, 500)
+        sprites.destroy(otherSprite, effects.fire, 500)
+
+        
 
     })
 
@@ -152,15 +154,13 @@ function shoot() {
  }
  
  function createEnemy() {
-     enemy = sprites.create(assets.image`enemy_left`, SpriteKind.Enemy)
-     tiles.placeOnTile(enemy, tiles.getTileLocation(4, 44))
-     enemy.setVelocity(-50, 0)
-     
-     //scene.onOverlapTile(SpriteKind.Player, sprites.castle.tileGrass1, function (sprite, location) {
-        // enemy.follow(john, 30)})
+     enemies.forEach(zombie => {
+         tiles.placeOnTile(zombie.type, tiles.getTileLocation(zombie.locationX, zombie.locationY))
+         zombie.type.setVelocity(-50, 0)
+     })
  }
  
- function createTileMap() {
+ function createTileMap() {+
      tiles.setCurrentTilemap(tilemap`level_1`)
      info.setLife(3)
      
@@ -184,20 +184,27 @@ function shoot() {
  }
  
 game.onUpdate(() => {
-     if (enemy.isHittingTile(CollisionDirection.Left)) {
-         enemy.vx += 50
-     } else if (enemy.isHittingTile(CollisionDirection.Right)) {
-         enemy.vx += -50
-     }
- 
-     if (enemy.vx > 1) {
-         animation.runImageAnimation(
-             enemy, assets.animation`enemy_walk_right`, 500, true)
-     } else if (enemy.vx < 1) { 
- 
-         animation.runImageAnimation(
-             enemy, assets.animation`enemy_walk_left`, 500, true)
-     }
+    if (enemies.length == 0) {
+        createEnemies()
+    } else {
+        enemies.forEach(zombie => { 
+            if (zombie.type.isHittingTile(CollisionDirection.Left)) {
+                zombie.type.vx += 50
+            } else if (zombie.type.isHittingTile(CollisionDirection.Right)) {
+                zombie.type.vx += -50
+            }
+        
+            if (zombie.type.vx > 1) {
+                animation.runImageAnimation(
+                    zombie.type, assets.animation`enemy_walk_right`, 500, true)
+            } else if (zombie.type.vx < 1) { 
+        
+                animation.runImageAnimation(
+                    zombie.type, assets.animation`enemy_walk_left`, 500, true)
+            }
+        })
+           
+    }
  });
  
  game.onUpdate(function () {
@@ -217,8 +224,21 @@ game.onUpdate(() => {
  })
 
  game.onUpdate(function () {
-    let tmLocation = john.tilemapLocation()
-    if (tmLocation.col == 3 && tmLocation.row == 47) {
-       enemy.follow(john, 30)
-    }
+     let tmLocation = john.tilemapLocation()
+     
+    enemies.forEach(zombie => {
+        if (tmLocation.col == zombie.followX && tmLocation.row == zombie.followY) {
+            zombie.type.follow(john, 30)
+         }
+     })
  })
+
+ function createEnemies() {
+    let enemy0 = { type: sprites.create(assets.image`enemy_left`, SpriteKind.Enemy), locationX: 4, locationY: 44, followX:3, followY: 47}
+     let enemy1 = { type: sprites.create(assets.image`enemy_right`, SpriteKind.Enemy), locationX: 4, locationY: 30, followX:2, followY: 35 }
+     let enemy2 = { type: sprites.create(assets.image`enemy_right`, SpriteKind.Enemy), locationX: 6, locationY: 28, followX:2, followY: 35 }
+    enemies.push(enemy0)
+     enemies.push(enemy1)
+     enemies.push(enemy2)
+    createEnemy()
+ }
