@@ -183,7 +183,7 @@ function shoot() {
      dialogmode = false
  }
  
- game.onUpdate(() => {
+game.onUpdate(() => {
      if (enemy.isHittingTile(CollisionDirection.Left)) {
          enemy.vx += 50
      } else if (enemy.isHittingTile(CollisionDirection.Right)) {
