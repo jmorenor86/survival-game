@@ -27,7 +27,6 @@ let enemies: any[] = []
  let dialogmode = true
 let lastDirection = 0
 let sword: Sprite
-let changeCostume=false
  startGame()
  
  function startGame() {
@@ -45,7 +44,6 @@ function createSword() {
  }
  
 function createPlayer() {
-    console.log("felipe")
      john=sprites.create(assets.image`john_left`, SpriteKind.Player)
      controller.moveSprite(john) 
      
